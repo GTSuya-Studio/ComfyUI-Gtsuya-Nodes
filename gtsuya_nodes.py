@@ -49,7 +49,7 @@ class SimpleWildcards:
                 if not lines:
                     myline = ""
                 else:
-                    myline = random.choice(lines).lower()
+                    myline = random.choice(lines)
                 print(myline)
                 text = text.replace('__'+wildcard+'__',myline)
 
@@ -82,7 +82,7 @@ class SimpleWildcardsDir:
                 if not lines:
                     myline = ""
                 else:
-                    myline = random.choice(lines).lower()
+                    myline = random.choice(lines)
                 print(myline)
                 text = text.replace('__'+wildcard+'__',myline)
 
@@ -90,8 +90,47 @@ class SimpleWildcardsDir:
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------#
 
+class Wildcards:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "text": ("STRING", {"multiline": True}),
+            },
+            "optional": {
+                "str1": ("STRING", {"forceInput": True}),
+                "str2": ("STRING", {"forceInput": True}),      
+                "str3": ("STRING", {"forceInput": True}),      
+                "str4": ("STRING", {"forceInput": True}),      
+                "str5": ("STRING", {"forceInput": True}),       
+            }
+        }
+    
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("text",)
+    FUNCTION = "get_value"
+    CATEGORY = "gtsuya/wildcards"
+
+    def get_value(self, text, str1=None, str2=None, str3=None, str4=None, str5=None):
+
+        if str1:
+            text = text.replace('__str1__',str1)
+        if str2:
+            text = text.replace('__str2__',str2)
+        if str3:
+            text = text.replace('__str3__',str3)
+        if str4:
+            text = text.replace('__str4__',str4)
+        if str5:
+            text = text.replace('__str5__',str5)
+
+        return (text,)
+
+#---------------------------------------------------------------------------------------------------------------------------------------------------#
+
 # A dictionary that contains the friendly/humanly readable titles for the nodes
 NODE_DISPLAY_NAME_MAPPINGS = {
     "SimpleWildcards": "Simple Wildcards",
     "SimpleWildcardsDir": "Simple Wildcards (Dir.)",
+    "Wildcards": "Wildcards",
 }

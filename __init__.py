@@ -9,6 +9,7 @@ from .gtsuya_nodes import *
 NODE_CLASS_MAPPINGS = {
     "Simple Wildcards": SimpleWildcards,
     "Simple Wildcards (Dir.)": SimpleWildcardsDir,
+    "Wildcards": Wildcards,
 }
 
 __all__ = ['NODE_CLASS_MAPPINGS']
