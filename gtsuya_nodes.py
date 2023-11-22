@@ -4,6 +4,9 @@ import shutil
 import glob
 import re
 import random
+from urllib.request import urlopen
+import json
+import time
 
 """
 
@@ -37,7 +40,7 @@ class SimpleWildcards:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("text",)
     FUNCTION = "get_text"
-    CATEGORY = "gtsuya/wildcards"
+    CATEGORY = "GtsuyaStudio/Wildcards"
   
     def get_text(self, text, seed):
         wildcards_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))+'\\wildcards'
@@ -71,7 +74,7 @@ class SimpleWildcardsDir:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("text",)
     FUNCTION = "get_text"
-    CATEGORY = "gtsuya/wildcards"
+    CATEGORY = "GtsuyaStudio/Wildcards"
   
     def get_text(self, text, directory, seed):
         wildcards = re.findall('__(.*?)__', text)
@@ -109,7 +112,7 @@ class Wildcards:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("text",)
     FUNCTION = "get_value"
-    CATEGORY = "gtsuya/wildcards"
+    CATEGORY = "GtsuyaStudio/Wildcards"
 
     def get_value(self, text, str1=None, str2=None, str3=None, str4=None, str5=None):
 
@@ -128,9 +131,44 @@ class Wildcards:
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------#
 
+class GetFromDanbooru:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "query_tag": ("STRING", {"default": ""}),
+                "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
+            },
+        }
+        
+    RETURN_TYPES = ("STRING","STRING",)
+    RETURN_NAMES = ("tags","img_url",)
+    FUNCTION = "get_value"
+    CATEGORY = "GtsuyaStudio/Get From"
+
+    def get_value(self, seed, query_tag):
+        tags = None
+        img_url = None
+        login = "Gtsuya_Studio"
+        api_key = "orhE6jtQE2mBNPUZeSNki2Dp"
+        url = "https://danbooru.donmai.us/posts/random.json?login="+login+"&api_key="+api_key
+        if query_tag != '':
+            url = url+"&tags="+query_tag
+        img_url = None
+        with urlopen(url) as response:
+            body = response.read()
+            items = json.loads(body)
+            tags = items['tag_string']
+            img_url = items['file_url']
+
+        return (tags,img_url)
+
+#---------------------------------------------------------------------------------------------------------------------------------------------------#
+
 # A dictionary that contains the friendly/humanly readable titles for the nodes
 NODE_DISPLAY_NAME_MAPPINGS = {
     "SimpleWildcards": "Simple Wildcards",
     "SimpleWildcardsDir": "Simple Wildcards (Dir.)",
     "Wildcards": "Wildcards",
+    "GetFromDanbooru": "Get From Danbooru",
 }
