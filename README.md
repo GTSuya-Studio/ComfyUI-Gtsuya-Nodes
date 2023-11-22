@@ -36,4 +36,4 @@ This node allows to automaticaly get image url and tags list from a random post 
 
 ![Get From Danbooru](https://github.com/GTSuya-Studio/ComfyUI-Gtsuya-Nodes/assets/29682182/971f9a52-052a-433c-b7a0-f5861ad91634)
 
-Enter your prompt into the text box. Wildcard entries (srt#) must be indicated with double underscore around them and must correspond to the **Ramdom Line** nodes linked to this entry. For example, if a **Ramdom Line** nodes is linked to **str3**, the corresponding wildcard word must be **\_\_str3__**. You can actually use a maxiumum of 5 wildcards as the same time.
+The node can be used directly with the default settings. If you want to restrict results and obtain a tags list containing a specific tag, indicate this tag into the **tag_query** field. This tag must a a valid [Danbooru tag]([https://danbooru.donmai.us/](https://danbooru.donmai.us/tags)https://danbooru.donmai.us/tags) website 
