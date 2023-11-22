@@ -32,9 +32,8 @@ This node allows to manage wildcards lists and values directly from ComfyUI work
 Enter your prompt into the text box. Wildcard entries (srt#) must be indicated with double underscore around them and must correspond to the **Ramdom Line** nodes linked to this entry. For example, if a **Ramdom Line** nodes is linked to **str3**, the corresponding wildcard word must be **\_\_str3__**. You can actually use a maxiumum of 5 wildcards as the same time.
 
 ## Get From Danbooru
-This node allows to manage wildcards lists and values directly from ComfyUI workflows. It is not dependent anymore of external text files. This node must work in conjunction with **Ramdom Line** nodes from [Hakkun-ComfyUI-nodes](https://github.com/tudal/Hakkun-ComfyUI-nodes) which return a ramdom string from a list. To add **Wildcards** node: Right-click > Add Node > GtsuyaStudio > wildcards > Wildcards.
+This node allows to automaticaly get image url and tags list from a random post hosted on [Danbooru](https://danbooru.donmai.us/) website. It is also possible to restrict obtained results to a specific tag query. This node could work in conjunction with **Ramdom Line** nodes from [Hakkun-ComfyUI-nodes](https://github.com/tudal/Hakkun-ComfyUI-nodes) which return a ramdom string from a list. To add **Wildcards** node: Right-click > Add Node > GtsuyaStudio > wildcards > Wildcards.
 
 ![Get From Danbooru](https://github.com/GTSuya-Studio/ComfyUI-Gtsuya-Nodes/assets/29682182/971f9a52-052a-433c-b7a0-f5861ad91634)
-
 
 Enter your prompt into the text box. Wildcard entries (srt#) must be indicated with double underscore around them and must correspond to the **Ramdom Line** nodes linked to this entry. For example, if a **Ramdom Line** nodes is linked to **str3**, the corresponding wildcard word must be **\_\_str3__**. You can actually use a maxiumum of 5 wildcards as the same time.
