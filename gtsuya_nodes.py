@@ -147,20 +147,25 @@ class GetFromDanbooru:
     CATEGORY = "GtsuyaStudio/Get From"
 
     def get_value(self, seed, query_tag):
-        tags = None
-        img_url = None
         login = "Gtsuya_Studio"
         api_key = "orhE6jtQE2mBNPUZeSNki2Dp"
         url = "https://danbooru.donmai.us/posts/random.json?login="+login+"&api_key="+api_key
         if query_tag != '':
             url = url+"&tags="+query_tag
         img_url = None
-        with urlopen(url) as response:
-            body = response.read()
-            items = json.loads(body)
-            tags = items['tag_string']
-            img_url = items['file_url']
-
+        while True:
+            tags = None
+            img_url = None
+            with urlopen(url) as response :
+                body = response.read()
+                items = json.loads(body)
+                try:
+                    tags = items['tag_string']
+                    img_url = items['file_url']
+                except:
+                    pass
+                if tags and img_url :
+                    break
         return (tags,img_url)
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------#
