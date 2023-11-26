@@ -152,7 +152,39 @@ class DanbooruRandom:
         url = "https://danbooru.donmai.us/posts/random.json?login="+login+"&api_key="+api_key
         if query_tag != '':
             url = url+"&tags="+query_tag
-        img_url = None
+        while True:
+            tags = None
+            img_url = None
+            with urlopen(url) as response :
+                body = response.read()
+                items = json.loads(body)
+                try:
+                    tags = items['tag_string']
+                    img_url = items['file_url']
+                except:
+                    pass
+                if tags and img_url :
+                    break
+        return (tags,img_url)
+
+#---------------------------------------------------------------------------------------------------------------------------------------------------#
+
+class DanbooruID:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "post_id": ("STRING", {"default": ""}),
+            },
+        }
+        
+    RETURN_TYPES = ("STRING","STRING",)
+    RETURN_NAMES = ("tags","img_url",)
+    FUNCTION = "get_value"
+    CATEGORY = "GtsuyaStudio/Downloads"
+
+    def get_value(self, post_id):
+        url = "https://danbooru.donmai.us/posts/"+post_id+".json"
         while True:
             tags = None
             img_url = None
@@ -176,4 +208,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "SimpleWildcardsDir": "Simple Wildcards (Dir.)",
     "Wildcards": "Wildcards",
     "DanbooruRandom": "Danbooru (Random)",
+    "DanbooruID": "Danbooru (ID)",
 }
