@@ -131,7 +131,7 @@ class Wildcards:
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------#
 
-class GetFromDanbooru:
+class DanbooruRandom:
     @classmethod
     def INPUT_TYPES(s):
         return {
@@ -146,7 +146,7 @@ class GetFromDanbooru:
     RETURN_TYPES = ("STRING","STRING",)
     RETURN_NAMES = ("tags","img_url",)
     FUNCTION = "get_value"
-    CATEGORY = "GtsuyaStudio/Get From"
+    CATEGORY = "GtsuyaStudio/Downloads"
 
     def get_value(self, seed, query_tag, login, api_key):
         url = "https://danbooru.donmai.us/posts/random.json?login="+login+"&api_key="+api_key
@@ -175,5 +175,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "SimpleWildcards": "Simple Wildcards",
     "SimpleWildcardsDir": "Simple Wildcards (Dir.)",
     "Wildcards": "Wildcards",
-    "GetFromDanbooru": "Get From Danbooru",
+    "DanbooruRandom": "Danbooru (Random)",
 }

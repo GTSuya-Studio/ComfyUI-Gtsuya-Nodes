@@ -10,7 +10,7 @@ NODE_CLASS_MAPPINGS = {
     "Simple Wildcards": SimpleWildcards,
     "Simple Wildcards (Dir.)": SimpleWildcardsDir,
     "Wildcards": Wildcards,
-    "Get From Danbooru": GetFromDanbooru,
+    "Danbooru (Random)": DanbooruRandom,
     }
 
 __all__ = ['NODE_CLASS_MAPPINGS']
