@@ -137,6 +137,8 @@ class GetFromDanbooru:
         return {
             "required": {
                 "query_tag": ("STRING", {"default": ""}),
+                "login": ("STRING", {"default": ""}),
+                "api_key": ("STRING", {"default": ""}),
                 "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
             },
         }
@@ -146,9 +148,7 @@ class GetFromDanbooru:
     FUNCTION = "get_value"
     CATEGORY = "GtsuyaStudio/Get From"
 
-    def get_value(self, seed, query_tag):
-        login = "Gtsuya_Studio"
-        api_key = "orhE6jtQE2mBNPUZeSNki2Dp"
+    def get_value(self, seed, query_tag, login, api_key):
         url = "https://danbooru.donmai.us/posts/random.json?login="+login+"&api_key="+api_key
         if query_tag != '':
             url = url+"&tags="+query_tag
