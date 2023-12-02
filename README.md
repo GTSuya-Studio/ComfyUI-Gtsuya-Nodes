@@ -44,3 +44,12 @@ This node allows to automaticaly get image url and tags list from a random post 
 ![Capture d’écran 2023-11-26 163744](https://github.com/GTSuya-Studio/ComfyUI-Gtsuya-Nodes/assets/29682182/d6d8fc8a-da16-4403-ab56-1343d00a56e5)
 
 To use this node, you need a valid API key from [Danbooru](https://danbooru.donmai.us/) website. To obtain such API key, you need first to have an [Danbooru account](https://danbooru.donmai.us/users/new), then ask for an unique API key, and then give permission to use **posts:random** data. Once it is done, finaly indicate your Danbooru login and API key number. The node is ready. The node can be used directly with the default settings. If you want to restrict results and obtain a tags list containing a specific tag, indicate this tag into the **tag_query** field. This tag must be a valid [Danbooru tag](https://danbooru.donmai.us/tags) website.
+
+## Tools / Replace Strings
+This node allows to automaticaly delete or replace some specific strings into a test or a prompt. To add **Replace Strings** node: Right-click > Add Node > GtsuyaStudio > Tools > Replace Strings.
+
+![Capture d’écran 2023-12-01 202225](https://github.com/GTSuya-Studio/ComfyUI-Gtsuya-Nodes/assets/29682182/dc9409bf-1b12-4571-9deb-755e31e16281)
+
+To use this node, you need to link inputs to 2 text nodes : **text** entry correspond to the text where you want to replace or delete strings, and **replace_list** entry correspond to the list of words that would be replaced. You have to set one strings replacement per line. String replacement line must be like this: **string1|string2**, where **string1** is the  string that will be replaced, and **string2** is the replacement string. If **string2** is not specified, **string1** will be deleted form the text.
+ 
+
