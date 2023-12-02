@@ -12,6 +12,7 @@ NODE_CLASS_MAPPINGS = {
     "Wildcards": Wildcards,
     "Danbooru (Random)": DanbooruRandom,
     "Danbooru (ID)": DanbooruID,
+    "Replace Strings": ReplaceStrings,
     }
 
 __all__ = ['NODE_CLASS_MAPPINGS']

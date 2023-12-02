@@ -56,7 +56,7 @@ class SimpleWildcards:
                 print(myline)
                 text = text.replace('__'+wildcard+'__',myline)
 
-        return (text,seed)
+        return (text,seed,)
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -89,7 +89,7 @@ class SimpleWildcardsDir:
                 print(myline)
                 text = text.replace('__'+wildcard+'__',myline)
 
-        return (text,seed)
+        return (text,seed,)
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -165,7 +165,7 @@ class DanbooruRandom:
                     pass
                 if tags and img_url :
                     break
-        return (tags,img_url)
+        return (tags,img_url,)
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -198,10 +198,33 @@ class DanbooruID:
                     pass
                 if tags and img_url :
                     break
-        return (tags,img_url)
+        return (tags,img_url,)
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------#
 
+class ReplaceStrings:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "text": ("STRING", {"default": ""}),
+                "replace_list": ("STRING", {"default": ""}),
+            },
+        }
+        
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("text",)
+    FUNCTION = "get_value"
+    CATEGORY = "GtsuyaStudio/Tools"
+
+    def get_value(self, text, replace_list):
+        for multi_words in replace_list.splitlines():
+            words = multi_words.split("|")
+            text = text.replace(words[0],words[1])
+        text = ' '.join(text.split())
+        return (text,)
+
+#---------------------------------------------------------------------------------------------------------------------------------------------------#
 # A dictionary that contains the friendly/humanly readable titles for the nodes
 NODE_DISPLAY_NAME_MAPPINGS = {
     "SimpleWildcards": "Simple Wildcards",
@@ -209,4 +232,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Wildcards": "Wildcards",
     "DanbooruRandom": "Danbooru (Random)",
     "DanbooruID": "Danbooru (ID)",
+    "ReplaceStrings": "Replace Strings",
 }
