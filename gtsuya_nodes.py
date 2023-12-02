@@ -10,7 +10,7 @@ import time
 
 """
 
-    A set of custom nodes for ComfyUI - focused on wildcards utilities
+    A set of small custom nodes for ComfyUI, focused on automatic prompt generation and wildcards utilities
     By GTSuya Studio
 
     Copyright (c) 2023  
@@ -19,10 +19,10 @@ import time
 
 MANIFEST = {
     "name": "GTSuyaNodes",
-    "version": (0,0,1),
+    "version": (1,0,0),
     "author": "GTSuya Studio",
     "project": "",
-    "description": " A set of custom nodes for ComfyUI - focused on wildcards utilities",
+    "description": "A set of small custom nodes for ComfyUI, focused on automatic prompt generation and wildcards utilities",
 }
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------#
