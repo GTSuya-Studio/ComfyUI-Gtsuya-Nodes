@@ -93,7 +93,7 @@ class SimpleWildcardsDir:
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------#
 
-class Wildcards:
+class WildcardsNodes:
     @classmethod
     def INPUT_TYPES(s):
         return {
@@ -229,7 +229,7 @@ class ReplaceStrings:
 NODE_DISPLAY_NAME_MAPPINGS = {
     "SimpleWildcards": "Simple Wildcards",
     "SimpleWildcardsDir": "Simple Wildcards (Dir.)",
-    "Wildcards": "Wildcards",
+    "WildcardsNodes": "Wildcards Nodes",
     "DanbooruRandom": "Danbooru (Random)",
     "DanbooruID": "Danbooru (ID)",
     "ReplaceStrings": "Replace Strings",

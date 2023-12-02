@@ -9,7 +9,7 @@ from .gtsuya_nodes import *
 NODE_CLASS_MAPPINGS = {
     "Simple Wildcards": SimpleWildcards,
     "Simple Wildcards (Dir.)": SimpleWildcardsDir,
-    "Wildcards": Wildcards,
+    "Wildcards Nodes": WildcardsNodes,
     "Danbooru (Random)": DanbooruRandom,
     "Danbooru (ID)": DanbooruID,
     "Replace Strings": ReplaceStrings,
