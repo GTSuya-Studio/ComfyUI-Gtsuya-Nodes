@@ -225,6 +225,27 @@ class ReplaceStrings:
         return (text,)
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------#
+
+class RandomFileFromPath:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "directory": ("STRING", {"default": ""}),
+                "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
+            },
+        }
+        
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("text",)
+    FUNCTION = "get_value"
+    CATEGORY = "GtsuyaStudio/Tools"
+
+    def get_value(self, seed, directory):
+        text = os.path.join(directory, random.choice(os.listdir(directory))) 
+        return (text,)
+
+#---------------------------------------------------------------------------------------------------------------------------------------------------#
 # A dictionary that contains the friendly/humanly readable titles for the nodes
 NODE_DISPLAY_NAME_MAPPINGS = {
     "SimpleWildcards": "Simple Wildcards",
@@ -233,4 +254,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "DanbooruRandom": "Danbooru (Random)",
     "DanbooruID": "Danbooru (ID)",
     "ReplaceStrings": "Replace Strings",
+    "RandomFileFromPath": "Random File From Path",
 }

@@ -13,6 +13,7 @@ NODE_CLASS_MAPPINGS = {
     "Danbooru (Random)": DanbooruRandom,
     "Danbooru (ID)": DanbooruID,
     "Replace Strings": ReplaceStrings,
+    "Random File From Path": RandomFileFromPath,
     }
 
 __all__ = ['NODE_CLASS_MAPPINGS']
