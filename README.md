@@ -52,4 +52,10 @@ This node allows to automaticaly delete or replace some specific strings into a 
 
 To use this node, you need to link inputs to 2 text nodes : **text** entry correspond to the text where you want to replace or delete strings, and **replace_list** entry correspond to the list of words that would be replaced. You have to set one strings replacement per line. String replacement line must be like this: **string1|string2**, where **string1** is the  string that will be replaced, and **string2** is the replacement string. If **string2** is not specified, **string1** will be deleted form the text.
  
+## Tools / Random File From Path
+This is a simple node that return a random file path form a directory. In case of images, this node could work in conjunction with **Load Image From URL** node from [comfyui-art-venture](https://github.com/sipherxyz/comfyui-art-venture) nodes to import the corresponding image directly into ComfyUI. To add **Random File From Path** node: Right-click > Add Node > GtsuyaStudio > Tools > Random File From Path.
+
+![Capture d’écran 2023-12-09 201515](https://github.com/GTSuya-Studio/ComfyUI-Gtsuya-Nodes/assets/29682182/480820a9-5a24-4a90-9eda-0de4e2143561)
+
+To use this node you just have to indicate a directory path where are located the files you want to randomly select. 
 
