@@ -1,0 +1,14 @@
+[project]
+name = "comfyui-gtsuya-nodes"
+description = "ComfyUI-GTSuya-Nodes is a ComfyUI extension designed to add several wildcards supports into ComfyUI. Wildcards allow you to use __name__ syntax in your prompt to get a random line from a file named name.txt in a wildcards directory."
+version = "1.0.0"
+license = "LICENSE"
+
+[project.urls]
+Repository = "https://github.com/GTSuya-Studio/ComfyUI-Gtsuya-Nodes"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "ComfyUI-Gtsuya-Nodes"
+Icon = ""
