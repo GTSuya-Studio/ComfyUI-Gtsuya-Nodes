@@ -19,7 +19,7 @@ import time
 
 MANIFEST = {
     "name": "GTSuyaNodes",
-    "version": (1,0,0),
+    "version": (1,1,0),
     "author": "GTSuya Studio",
     "project": "",
     "description": "A set of small custom nodes for ComfyUI, focused on automatic prompt generation and wildcards utilities",
@@ -43,11 +43,12 @@ class SimpleWildcards:
     CATEGORY = "GtsuyaStudio/Wildcards"
   
     def get_text(self, text, seed):
-        wildcards_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))+'\\wildcards'
+        wildcards_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "wildcards")
         wildcards = re.findall('__(.*?)__', text)
         for wildcard in wildcards :
-            if os.path.isfile(wildcards_path+'\\'+wildcard+'.txt'):
-                lines = open(wildcards_path+'\\'+wildcard+'.txt').read().splitlines()
+            folder = os.path.join(wildcards_path, wildcard+".txt")
+            if os.path.isfile(folder):
+                lines = open(folder).read().splitlines()
                 print(lines)
                 if not lines:
                     myline = ""
@@ -77,10 +78,12 @@ class SimpleWildcardsDir:
     CATEGORY = "GtsuyaStudio/Wildcards"
   
     def get_text(self, text, directory, seed):
+        wildcards_path = directory
         wildcards = re.findall('__(.*?)__', text)
         for wildcard in wildcards :
-            if os.path.isfile(directory+'\\'+wildcard+'.txt'):
-                lines = open(directory+'\\'+wildcard+'.txt').read().splitlines()
+            folder = os.path.join(wildcards_path, wildcard+".txt")
+            if os.path.isfile(folder):
+                lines = open(folder).read().splitlines()
                 print(lines)
                 if not lines:
                     myline = ""
