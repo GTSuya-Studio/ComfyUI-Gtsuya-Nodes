@@ -77,9 +77,14 @@ class SimpleWildcardsDir:
 
         iteration = 0
         wildcards = re.findall('__(.*?)__', text)
+        processed_wildcards = set()
 
         while wildcards and iteration < wildcard_depth:
+            found_any = False
             for wildcard in wildcards:
+                if wildcard in processed_wildcards:
+                    continue
+
                 folder = os.path.join(wildcards_path, wildcard + ".txt")
                 if os.path.isfile(folder):
                     with open(folder, 'r', encoding='utf-8') as f:
@@ -92,10 +97,16 @@ class SimpleWildcardsDir:
                         myline = random.choice(lines)
 
                     text = text.replace('__' + wildcard + '__', myline, 1)
+                    found_any = True
                 else:
-                    text = text.replace('__' + wildcard + '__', '', 1)
+                    processed_wildcards.add(wildcard)
+                    print(f"Warning: Wildcard file not found: {wildcard}.txt")
+
+            if not found_any:
+                break
 
             wildcards = re.findall('__(.*?)__', text)
+            wildcards = [w for w in wildcards if w not in processed_wildcards]
             iteration += 1
 
         if iteration >= wildcard_depth and wildcards:
