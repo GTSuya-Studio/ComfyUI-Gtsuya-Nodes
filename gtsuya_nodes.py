@@ -19,7 +19,7 @@ import time
 
 MANIFEST = {
     "name": "GTSuyaNodes",
-    "version": (1,1,0),
+    "version": (1,2,0),
     "author": "GTSuya Studio",
     "project": "",
     "description": "A set of small custom nodes for ComfyUI, focused on automatic prompt generation and wildcards utilities",
@@ -34,6 +34,7 @@ class SimpleWildcards:
             "required": {
                 "text": ("STRING", {"multiline": True}),
                 "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
+                "wildcard_depth": ("INT", {"default": 50, "min": 2, "max": 256}),
             }
         }
 
@@ -41,23 +42,15 @@ class SimpleWildcards:
     RETURN_NAMES = ("text",)
     FUNCTION = "get_text"
     CATEGORY = "GtsuyaStudio/Wildcards"
-  
-    def get_text(self, text, seed):
-        wildcards_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "wildcards")
-        wildcards = re.findall('__(.*?)__', text)
-        for wildcard in wildcards :
-            folder = os.path.join(wildcards_path, wildcard+".txt")
-            if os.path.isfile(folder):
-                lines = open(folder).read().splitlines()
-                print(lines)
-                if not lines:
-                    myline = ""
-                else:
-                    myline = random.choice(lines)
-                print(myline)
-                text = text.replace('__'+wildcard+'__',myline)
 
-        return (text,seed,)
+    def get_text(self, text, seed, wildcard_depth):
+        default_directory = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+            "wildcards"
+        )
+
+        wildcard_dir = SimpleWildcardsDir()
+        return wildcard_dir.get_text(text, default_directory, seed, wildcard_depth)
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -69,6 +62,7 @@ class SimpleWildcardsDir:
                 "text": ("STRING", {"multiline": True}),
                 "directory": ("STRING", {"default": ""}),
                 "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
+                "wildcard_depth": ("INT", {"default": 50, "min": 2, "max": 256}),
             }
         }
 
@@ -76,24 +70,38 @@ class SimpleWildcardsDir:
     RETURN_NAMES = ("text",)
     FUNCTION = "get_text"
     CATEGORY = "GtsuyaStudio/Wildcards"
-  
-    def get_text(self, text, directory, seed):
+
+    def get_text(self, text, directory, seed, wildcard_depth):
+        random.seed(seed)
         wildcards_path = directory
+
+        iteration = 0
         wildcards = re.findall('__(.*?)__', text)
-        for wildcard in wildcards :
-            folder = os.path.join(wildcards_path, wildcard+".txt")
-            if os.path.isfile(folder):
-                lines = open(folder).read().splitlines()
-                print(lines)
-                if not lines:
-                    myline = ""
+
+        while wildcards and iteration < wildcard_depth:
+            for wildcard in wildcards:
+                folder = os.path.join(wildcards_path, wildcard + ".txt")
+                if os.path.isfile(folder):
+                    with open(folder, 'r', encoding='utf-8') as f:
+                        lines = f.read().splitlines()
+                    lines = [line for line in lines if line.strip() and not line.strip().startswith("#")]
+
+                    if not lines:
+                        myline = ""
+                    else:
+                        myline = random.choice(lines)
+
+                    text = text.replace('__' + wildcard + '__', myline, 1)
                 else:
-                    myline = random.choice(lines)
-                print(myline)
-                text = text.replace('__'+wildcard+'__',myline)
+                    text = text.replace('__' + wildcard + '__', '', 1)
 
-        return (text,seed,)
+            wildcards = re.findall('__(.*?)__', text)
+            iteration += 1
 
+        if iteration >= wildcard_depth and wildcards:
+            print(f"Warning: Wildcard depth limit reached ({wildcard_depth}). Possible infinite loop or deeply nested wildcards.")
+
+        return (text,)
 #---------------------------------------------------------------------------------------------------------------------------------------------------#
 
 class WildcardsNodes:
