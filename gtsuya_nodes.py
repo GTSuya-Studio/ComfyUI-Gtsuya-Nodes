@@ -1,35 +1,34 @@
-import nodes
 import os
-import shutil
-import glob
 import re
 import random
-from urllib.request import urlopen
 import json
-import time
+from pathlib import Path
+from urllib.request import urlopen
+from typing import Tuple, Optional
 
 """
+A set of small custom nodes for ComfyUI, focused on automatic prompt generation and wildcards utilities
+By GTSuya Studio
 
-    A set of small custom nodes for ComfyUI, focused on automatic prompt generation and wildcards utilities
-    By GTSuya Studio
-
-    Copyright (c) 2023  
-
+Copyright (c) 2025
 """
 
 MANIFEST = {
     "name": "GTSuyaNodes",
-    "version": (1,2,0),
+    "version": (1, 2, 2),
     "author": "GTSuya Studio",
     "project": "",
     "description": "A set of small custom nodes for ComfyUI, focused on automatic prompt generation and wildcards utilities",
 }
 
-#---------------------------------------------------------------------------------------------------------------------------------------------------#
+# ---------------------------------------------------------------------------------------------------------------------------------------------------#
+
 
 class SimpleWildcards:
+    """Process wildcards with default directory"""
+    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "text": ("STRING", {"multiline": True}),
@@ -43,20 +42,21 @@ class SimpleWildcards:
     FUNCTION = "get_text"
     CATEGORY = "GtsuyaStudio/Wildcards"
 
-    def get_text(self, text, seed, wildcard_depth):
-        default_directory = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-            "wildcards"
-        )
-
+    def get_text(self, text: str, seed: int, wildcard_depth: int) -> Tuple[str]:
+        default_directory = Path(__file__).parent.parent.parent / "wildcards"
+        
         wildcard_dir = SimpleWildcardsDir()
-        return wildcard_dir.get_text(text, default_directory, seed, wildcard_depth)
+        return wildcard_dir.get_text(text, str(default_directory), seed, wildcard_depth)
 
-#---------------------------------------------------------------------------------------------------------------------------------------------------#
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------#
+
 
 class SimpleWildcardsDir:
+    """Process wildcards with custom directory"""
+    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "text": ("STRING", {"multiline": True}),
@@ -71,33 +71,48 @@ class SimpleWildcardsDir:
     FUNCTION = "get_text"
     CATEGORY = "GtsuyaStudio/Wildcards"
 
-    def get_text(self, text, directory, seed, wildcard_depth):
+    def get_text(self, text: str, directory: str, seed: int, wildcard_depth: int) -> Tuple[str]:
         random.seed(seed)
-        wildcards_path = directory
+        wildcards_path = Path(directory)
+
+        if not wildcards_path.exists():
+            print(f"Warning: Wildcards directory not found: {directory}")
+            return (text,)
 
         iteration = 0
-        wildcards = re.findall('__(.*?)__', text)
         processed_wildcards = set()
 
-        while wildcards and iteration < wildcard_depth:
+        while iteration < wildcard_depth:
+            wildcards = re.findall(r'__(.*?)__', text)
+            
+            wildcards = [w for w in wildcards if w not in processed_wildcards]
+            
+            if not wildcards:
+                break
+
             found_any = False
+            
             for wildcard in wildcards:
-                if wildcard in processed_wildcards:
-                    continue
+                wildcard_file = wildcards_path / f"{wildcard}.txt"
+                
+                if wildcard_file.is_file():
+                    try:
+                        with open(wildcard_file, 'r', encoding='utf-8') as f:
+                            lines = f.read().splitlines()
+                        
+                        lines = [line for line in lines if line.strip() and not line.strip().startswith("#")]
 
-                folder = os.path.join(wildcards_path, wildcard + ".txt")
-                if os.path.isfile(folder):
-                    with open(folder, 'r', encoding='utf-8') as f:
-                        lines = f.read().splitlines()
-                    lines = [line for line in lines if line.strip() and not line.strip().startswith("#")]
-
-                    if not lines:
-                        myline = ""
-                    else:
-                        myline = random.choice(lines)
-
-                    text = text.replace('__' + wildcard + '__', myline, 1)
-                    found_any = True
+                        if lines:
+                            chosen_line = random.choice(lines)
+                            text = text.replace(f'__{wildcard}__', chosen_line, 1)
+                            found_any = True
+                        else:
+                            text = text.replace(f'__{wildcard}__', '', 1)
+                            processed_wildcards.add(wildcard)
+                            
+                    except Exception as e:
+                        print(f"Error reading wildcard file {wildcard}.txt: {e}")
+                        processed_wildcards.add(wildcard)
                 else:
                     processed_wildcards.add(wildcard)
                     print(f"Warning: Wildcard file not found: {wildcard}.txt")
@@ -105,57 +120,71 @@ class SimpleWildcardsDir:
             if not found_any:
                 break
 
-            wildcards = re.findall('__(.*?)__', text)
-            wildcards = [w for w in wildcards if w not in processed_wildcards]
             iteration += 1
 
-        if iteration >= wildcard_depth and wildcards:
-            print(f"Warning: Wildcard depth limit reached ({wildcard_depth}). Possible infinite loop or deeply nested wildcards.")
+        if iteration >= wildcard_depth:
+            remaining_wildcards = re.findall(r'__(.*?)__', text)
+            if remaining_wildcards:
+                print(f"Warning: Wildcard depth limit reached ({wildcard_depth}). "
+                      f"Possible infinite loop or deeply nested wildcards. "
+                      f"Remaining: {remaining_wildcards}")
 
         return (text,)
-#---------------------------------------------------------------------------------------------------------------------------------------------------#
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------#
+
 
 class WildcardsNodes:
+    """Replace custom wildcard placeholders with provided strings"""
+    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "text": ("STRING", {"multiline": True}),
             },
             "optional": {
                 "str1": ("STRING", {"forceInput": True}),
-                "str2": ("STRING", {"forceInput": True}),      
-                "str3": ("STRING", {"forceInput": True}),      
-                "str4": ("STRING", {"forceInput": True}),      
-                "str5": ("STRING", {"forceInput": True}),       
+                "str2": ("STRING", {"forceInput": True}),
+                "str3": ("STRING", {"forceInput": True}),
+                "str4": ("STRING", {"forceInput": True}),
+                "str5": ("STRING", {"forceInput": True}),
             }
         }
-    
+
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("text",)
     FUNCTION = "get_value"
     CATEGORY = "GtsuyaStudio/Wildcards"
 
-    def get_value(self, text, str1=None, str2=None, str3=None, str4=None, str5=None):
+    def get_value(self, text: str, str1: Optional[str] = None, str2: Optional[str] = None,
+                  str3: Optional[str] = None, str4: Optional[str] = None,
+                  str5: Optional[str] = None) -> Tuple[str]:
+        
+        replacements = {
+            '__str1__': str1,
+            '__str2__': str2,
+            '__str3__': str3,
+            '__str4__': str4,
+            '__str5__': str5,
+        }
 
-        if str1:
-            text = text.replace('__str1__',str1)
-        if str2:
-            text = text.replace('__str2__',str2)
-        if str3:
-            text = text.replace('__str3__',str3)
-        if str4:
-            text = text.replace('__str4__',str4)
-        if str5:
-            text = text.replace('__str5__',str5)
+        for placeholder, value in replacements.items():
+            if value is not None:
+                text = text.replace(placeholder, value)
 
         return (text,)
 
-#---------------------------------------------------------------------------------------------------------------------------------------------------#
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------#
+
 
 class DanbooruRandom:
+    """Fetch random image and tags from Danbooru"""
+    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "query_tag": ("STRING", {"default": ""}),
@@ -164,111 +193,176 @@ class DanbooruRandom:
                 "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
             },
         }
-        
-    RETURN_TYPES = ("STRING","STRING",)
-    RETURN_NAMES = ("tags","img_url",)
+
+    RETURN_TYPES = ("STRING", "STRING",)
+    RETURN_NAMES = ("tags", "img_url",)
     FUNCTION = "get_value"
     CATEGORY = "GtsuyaStudio/Downloads"
 
-    def get_value(self, seed, query_tag, login, api_key):
-        url = "https://danbooru.donmai.us/posts/random.json?login="+login+"&api_key="+api_key
-        if query_tag != '':
-            url = url+"&tags="+query_tag
-        while True:
-            tags = None
-            img_url = None
-            with urlopen(url) as response :
-                body = response.read()
-                items = json.loads(body)
-                try:
-                    tags = items['tag_string']
-                    img_url = items['file_url']
-                except:
-                    pass
-                if tags and img_url :
-                    break
-        return (tags,img_url,)
+    def get_value(self, seed: int, query_tag: str, login: str, api_key: str) -> Tuple[str, str]:
+        url = f"https://danbooru.donmai.us/posts/random.json?login={login}&api_key={api_key}"
+        
+        if query_tag.strip():
+            url += f"&tags={query_tag}"
 
-#---------------------------------------------------------------------------------------------------------------------------------------------------#
+        max_retries = 10
+        retry_count = 0
+
+        while retry_count < max_retries:
+            try:
+                with urlopen(url, timeout=30) as response:
+                    body = response.read()
+                    items = json.loads(body)
+                    
+                    tags = items.get('tag_string')
+                    img_url = items.get('file_url')
+                    
+                    if tags and img_url:
+                        return (tags, img_url)
+                    
+            except Exception as e:
+                print(f"Error fetching from Danbooru (attempt {retry_count + 1}): {e}")
+            
+            retry_count += 1
+
+        raise RuntimeError(f"Failed to fetch valid data from Danbooru after {max_retries} attempts")
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------#
+
 
 class DanbooruID:
+    """Fetch specific image and tags from Danbooru by post ID"""
+    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "post_id": ("STRING", {"default": ""}),
             },
         }
-        
-    RETURN_TYPES = ("STRING","STRING",)
-    RETURN_NAMES = ("tags","img_url",)
+
+    RETURN_TYPES = ("STRING", "STRING",)
+    RETURN_NAMES = ("tags", "img_url",)
     FUNCTION = "get_value"
     CATEGORY = "GtsuyaStudio/Downloads"
 
-    def get_value(self, post_id):
-        url = "https://danbooru.donmai.us/posts/"+post_id+".json"
-        while True:
-            tags = None
-            img_url = None
-            with urlopen(url) as response :
+    def get_value(self, post_id: str) -> Tuple[str, str]:
+        if not post_id.strip():
+            raise ValueError("Post ID cannot be empty")
+
+        url = f"https://danbooru.donmai.us/posts/{post_id}.json"
+
+        try:
+            with urlopen(url, timeout=30) as response:
                 body = response.read()
                 items = json.loads(body)
-                try:
-                    tags = items['tag_string']
-                    img_url = items['file_url']
-                except:
-                    pass
-                if tags and img_url :
-                    break
-        return (tags,img_url,)
+                
+                tags = items.get('tag_string')
+                img_url = items.get('file_url')
+                
+                if tags and img_url:
+                    return (tags, img_url)
+                else:
+                    raise ValueError(f"Post {post_id} does not have valid tags or image URL")
+                    
+        except Exception as e:
+            raise RuntimeError(f"Error fetching Danbooru post {post_id}: {e}")
 
-#---------------------------------------------------------------------------------------------------------------------------------------------------#
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------#
+
 
 class ReplaceStrings:
+    """Replace strings based on a replacement list"""
+    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "text": ("STRING", {"default": ""}),
                 "replace_list": ("STRING", {"default": ""}),
             },
         }
-        
+
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("text",)
     FUNCTION = "get_value"
     CATEGORY = "GtsuyaStudio/Tools"
 
-    def get_value(self, text, replace_list):
-        for multi_words in replace_list.splitlines():
-            words = multi_words.split("|")
-            text = text.replace(words[0],words[1])
+    def get_value(self, text: str, replace_list: str) -> Tuple[str]:
+        for line in replace_list.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+                
+            parts = line.split("|", 1)
+            if len(parts) == 2:
+                old_str, new_str = parts
+                text = text.replace(old_str, new_str)
+            else:
+                print(f"Warning: Invalid replacement format (expected 'old|new'): {line}")
+
         text = ' '.join(text.split())
+        
         return (text,)
 
-#---------------------------------------------------------------------------------------------------------------------------------------------------#
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------#
+
 
 class RandomFileFromPath:
+    """Select a random file from a directory"""
+    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "directory": ("STRING", {"default": ""}),
                 "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
             },
         }
-        
+
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("text",)
     FUNCTION = "get_value"
     CATEGORY = "GtsuyaStudio/Tools"
 
-    def get_value(self, seed, directory):
-        text = os.path.join(directory, random.choice(os.listdir(directory))) 
-        return (text,)
+    def get_value(self, seed: int, directory: str) -> Tuple[str]:
+        random.seed(seed)
+        
+        directory_path = Path(directory)
+        
+        if not directory_path.exists():
+            raise ValueError(f"Directory does not exist: {directory}")
+        
+        if not directory_path.is_dir():
+            raise ValueError(f"Path is not a directory: {directory}")
 
-#---------------------------------------------------------------------------------------------------------------------------------------------------#
-# A dictionary that contains the friendly/humanly readable titles for the nodes
+        files = [f for f in directory_path.iterdir() if f.is_file()]
+        
+        if not files:
+            raise ValueError(f"No files found in directory: {directory}")
+
+        chosen_file = random.choice(files)
+        
+        return (str(chosen_file),)
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------#
+# Node display names mapping
+
+
+NODE_CLASS_MAPPINGS = {
+    "SimpleWildcards": SimpleWildcards,
+    "SimpleWildcardsDir": SimpleWildcardsDir,
+    "WildcardsNodes": WildcardsNodes,
+    "DanbooruRandom": DanbooruRandom,
+    "DanbooruID": DanbooruID,
+    "ReplaceStrings": ReplaceStrings,
+    "RandomFileFromPath": RandomFileFromPath,
+}
+
 NODE_DISPLAY_NAME_MAPPINGS = {
     "SimpleWildcards": "Simple Wildcards",
     "SimpleWildcardsDir": "Simple Wildcards (Dir.)",
