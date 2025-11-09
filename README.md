@@ -13,7 +13,7 @@ To install ComfyUI-GTSuya-Nodes in addition to an existing installation of Comfy
 ## Wildcards / Simple wildcards (Dir.)
 This node allows you to choose any directory on your hard drive containing your wildcards files. Those wildcards files don't need to be specifically into the ComfyUI root directory. To add **Simple wildcards (Dir.)** node: Right-click > Add Node > GtsuyaStudio > Wildcards > Simple wildcards (Dir.).
 
-![Simple wildcards (Dir.)](https://github.com/user-attachments/assets/da7f22a2-3377-4714-96d8-40ff5dbe27c4)
+![Simple wildcards (Dir.)](https://github.com/GTSuya-Studio/ComfyUI-Gtsuya-Nodes/assets/29682182/e9bb74e7-4496-4bba-8477-44dad4639f58)
 
 Enter your prompt into the text box. Wildcard words must be indicated with double underscore around them. For example, if your wildcards file is named **country.txt**, the corresponding wildcard word must be **\_\_country__**. You can add as many wildcards as you want. Then indicate the path of the directory where your wildcards files are stored.
 
@@ -23,7 +23,7 @@ Enter your prompt into the text box. Wildcard words must be indicated with doubl
 - **Comment Support**: Lines starting with `#` in your wildcards files are now ignored as comments.
 - **Reproducible Results**: The `seed` parameter now ensures consistent random selections across runs.
 - **Empty Lines Handling**: Empty lines in wildcards files are automatically filtered out.
-- **Missing Wildcards Handling**: Wildcards that don't have a corresponding file are automatically removed from the prompt instead of being left as-is.
+- **Missing Wildcards Detection**: Wildcards that don't have a corresponding file remain visible in the output (e.g., `__missing__`) and trigger a warning in the console. This makes it easier to identify and fix missing wildcard files during debugging.
 
 ### Example of Nested Wildcards:
 If you have a file **weather.txt** containing:
@@ -47,7 +47,7 @@ This node provides the same functionality as **Simple wildcards (Dir.)** but aut
 
 To use this node, create a directory named **wildcards** into the ComfyUI root folder and put all your wildcards text files into it. Add a **Simple wildcards** node: Right-click > Add Node > GtsuyaStudio > Wildcards > Simple wildcards.
 
-![Simple wildcards](https://github.com/user-attachments/assets/5ceada8c-af72-4078-b89f-cb3834313290)
+![Simple wildcards](https://github.com/GTSuya-Studio/ComfyUI-Gtsuya-Nodes/assets/29682182/6f319087-3efb-4f63-8489-216909e64085)
 
 Enter your prompt into the text box. Wildcard words must be indicated with double underscore around them. For example, if your wildcards file is named **country.txt**, the corresponding wildcard word must be **\_\_country__**. You can add as many wildcards as you want.
 
@@ -98,6 +98,5 @@ To use this node you just have to indicate a directory path where the files you 
 - **Comment filtering**: Lines starting with `#` are now treated as comments and ignored
 - **Reproducible results**: Seed parameter now properly applied for consistent random selections
 - **Improved file handling**: Better UTF-8 encoding support and automatic closure of file handles
-- **Missing wildcards handling**: Non-existent wildcards are now automatically removed from prompts
+- **Missing wildcards detection**: Non-existent wildcards remain visible in the output with console warnings for easier debugging
 - **Empty lines filtering**: Empty lines in wildcards files are automatically skipped
-
