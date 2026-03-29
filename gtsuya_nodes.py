@@ -15,7 +15,7 @@ Copyright (c) 2025
 
 MANIFEST = {
     "name": "GTSuyaNodes",
-    "version": (1, 2, 2),
+    "version": (1, 3, 0),
     "author": "GTSuya Studio",
     "project": "",
     "description": "A set of small custom nodes for ComfyUI, focused on automatic prompt generation and wildcards utilities",
