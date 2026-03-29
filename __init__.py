@@ -14,6 +14,7 @@ NODE_CLASS_MAPPINGS = {
     "Danbooru (ID)": DanbooruID,
     "Replace Strings": ReplaceStrings,
     "Random File From Path": RandomFileFromPath,
+    "Random SDXL Resolutions": RandomSDXLResolutions
     }
 
 __all__ = ['NODE_CLASS_MAPPINGS']

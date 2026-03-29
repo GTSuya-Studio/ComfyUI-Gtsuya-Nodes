@@ -350,6 +350,56 @@ class RandomFileFromPath:
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------#
+
+SDXL_RESOLUTIONS = {
+    "Landscape 1536x640":  (1536, 640),
+    "Landscape 1344x768":  (1344, 768),
+    "Landscape 1216x832":  (1216, 832),
+    "Landscape 1152x896":  (1152, 896),
+    "Square   1024x1024":  (1024, 1024),
+    "Portrait  896x1152":  (896,  1152),
+    "Portrait  832x1216":  (832,  1216),
+    "Portrait  768x1344":  (768,  1344),
+    "Portrait  640x1536":  (640,  1536),
+}
+
+class RandomSDXLResolutions:
+    """Select a random SDXL image resolution"""
+    
+    CATEGORY = "utils/resolution"
+    FUNCTION = "get_resolution"
+    RETURN_TYPES = ("INT", "INT")
+    RETURN_NAMES = ("width", "height")
+ 
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "mode": (
+                    ["All", "Landscape only", "Portrait only", "Square only"],
+                    {"default": "All"},
+                ),
+                "seed": ("INT", {"default": 0, "min": 0, "max": 0xFFFFFFFFFFFFFFFF}),
+            }
+        }
+ 
+    def get_resolution(self, mode: str, seed: int):
+        rng = random.Random(seed)
+ 
+        if mode == "Landscape only":
+            pool = {k: v for k, v in SDXL_RESOLUTIONS.items() if k.startswith("Landscape")}
+        elif mode == "Portrait only":
+            pool = {k: v for k, v in SDXL_RESOLUTIONS.items() if k.startswith("Portrait")}
+        elif mode == "Square only":
+            pool = {k: v for k, v in SDXL_RESOLUTIONS.items() if k.startswith("Square")}
+        else:
+            pool = SDXL_RESOLUTIONS
+ 
+        label, (width, height) = rng.choice(list(pool.items()))
+        print(f"[RandomSDXLResolutions] Selected resolution : {label}  →  {width} × {height}")
+        return (width, height)
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------#
 # Node display names mapping
 
 
@@ -361,6 +411,7 @@ NODE_CLASS_MAPPINGS = {
     "DanbooruID": DanbooruID,
     "ReplaceStrings": ReplaceStrings,
     "RandomFileFromPath": RandomFileFromPath,
+    "RandomSDXLResolutions": RandomSDXLResolutions
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -371,4 +422,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "DanbooruID": "Danbooru (ID)",
     "ReplaceStrings": "Replace Strings",
     "RandomFileFromPath": "Random File From Path",
+    "RandomSDXLResolutions": "Random SDXL Resolutions"
 }

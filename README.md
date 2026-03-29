@@ -88,9 +88,45 @@ This is a simple node that returns a random file path from a directory. In case 
 
 To use this node you just have to indicate a directory path where the files you want to randomly select are located.
 
+## Image / Random SDXL Resolution
+This node generates a random resolution from the official SDXL format list and returns the corresponding `width` and `height` values. It is useful to automatically vary image dimensions across a batch without manually switching resolutions. To add **Random SDXL Resolution** node: Right-click > Add Node > GtsuyaStudio > Image > Random SDXL Resolution.
+
+To use this node, choose a generation **mode** from the dropdown and connect a **seed** value for reproducibility. The node will output the selected `width` and `height` integers, which can be wired directly into an **Empty Latent Image** or **KSampler** node.
+
+### Inputs
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `mode` | Dropdown | Filters available resolutions: `All`, `Landscape only`, `Portrait only`, `Square only` |
+| `seed` | INT | Random seed for reproducibility. Connect to a global seed node to keep results consistent across your workflow. |
+
+### Outputs
+
+| Output | Type | Description |
+|--------|------|-------------|
+| `width` | INT | Width of the randomly selected resolution |
+| `height` | INT | Height of the randomly selected resolution |
+
+### Available Resolutions
+
+| Orientation | Width | Height |
+|-------------|-------|--------|
+| Landscape | 1536 | 640 |
+| Landscape | 1344 | 768 |
+| Landscape | 1216 | 832 |
+| Landscape | 1152 | 896 |
+| Square | 1024 | 1024 |
+| Portrait | 896 | 1152 |
+| Portrait | 832 | 1216 |
+| Portrait | 768 | 1344 |
+| Portrait | 640 | 1536 |
+
 ---
 
 ## Changelog
+
+### Version 1.3.0
+- **New node — Random SDXL Resolution**: Randomly selects a resolution from the official SDXL format list (landscape, portrait, and square) and outputs `width` and `height` integers. Supports mode filtering and seed-based reproducibility.
 
 ### Version 1.2.0
 - **Nested wildcards support**: Wildcards can now reference other wildcards recursively
